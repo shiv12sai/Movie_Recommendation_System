@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CineMatch | Movie Recommendation System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+
+<header class="header">
+  <h1 class="logo">Cine<span>Match</span></h1>
+  <p class="tagline">Movie recommendations based on similarity</p>
+</header>
+
+<main class="page-wrapper">
+  <div class="content-card">
+
+    <section class="hero">
+      <h2>Find Movies You’ll Enjoy</h2>
+      <p>
+        Select a movie and get similar recommendations using
+        dataset-based clustering and similarity analysis.
+      </p>
+    </section>
+
+    <section class="input-section">
+      <label for="movieSelect">Choose a Movie</label>
+      <select id="movieSelect">
+        <option value="">-- Select a movie --</option>
+      </select>
+
+      <button onclick="goToResults()">Get Similar Movies</button>
+    </section>
+
+  </div>
+</main>
+
+<footer class="footer">
+  <p>Built by Shivsai Choudhury</p>
+  <div class="social-links">
+    <a href="https://www.linkedin.com/in/shivsai-choudhury" target="_blank"><i class="fab fa-linkedin"></i></a>
+    <a href="https://github.com/shiv12sai" target="_blank"><i class="fab fa-github"></i></a>
+    <a href="mailto:shiv12sai@gmail.com"><i class="fas fa-envelope"></i>
+</a>
+
+  </div>
+</footer>
+
+<script src="js/dataset.js"></script>
+<script src="js/recommender.js"></script>
+<script src="js/main.js"></script>
+
+<script>
+function goToResults() {
+  const selected = document.getElementById("movieSelect").value;
+  if (!selected) {
+    alert("Please select a movie");
+    return;
+  }
+  localStorage.setItem("selectedMovie", selected);
+  window.location.href = "result.html";
+}
+
+document.getElementById("movieSelect").addEventListener("keypress", function(event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    goToResults();
+  }
+});
+
+document.querySelector(".input-section").addEventListener("keypress", function(event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    goToResults();
+  }
+});
+</script>
+
+</body>
+</html>

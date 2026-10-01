@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CineMatch | Movie Details</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/result.css">
+</head>
+<body>
+
+<header class="navbar">
+  <div class="logo">Cine<span>Match</span></div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a class="active">Movie</a>
+  </nav>
+</header>
+
+<section class="result-container">
+
+  <div class="poster">
+    <img id="mainPoster" src="https://via.placeholder.com/300x450?text=Movie+Poster" alt="Movie Poster">
+  </div>
+
+  <div class="movie-details">
+    <span class="genre" id="movieGenreTop">MOVIE</span>
+    <h2 id="movieTitle">Movie Title</h2>
+
+    <div class="meta">
+      <span class="rating" id="movieRating"></span>
+      <span class="genre-badge" id="movieGenre"></span>
+      <span class="badge">HD</span>
+    </div>
+
+    <p class="description" id="movieDescription">
+      This page displays details of the selected movie and recommends similar movies
+      based on a dataset-driven clustering and similarity analysis approach.
+    </p>
+  </div>
+
+</section>
+
+<section class="recommendations">
+  <h3>Recommended Movies</h3>
+  <div id="recommendationGrid" class="rec-grid">
+  </div>
+</section>
+
+<footer>
+  <p>Built by <strong>Shivsai Choudhury</strong></p>
+  <div class="socials">
+    <a href="https://www.linkedin.com/in/shivsai-choudhury" target="_blank"><i class="fab fa-linkedin"></i></a>
+    <a href="https://github.com/shiv12sai" target="_blank"><i class="fab fa-github"></i></a>
+    <a href="https://www.instagram.com/shiv12sai" target="_blank"><i class="fab fa-instagram"></i></a>
+  </div>
+</footer>
+
+<!-- JS logic -->
+<script src="js/dataset.js"></script>
+<script src="js/recommender.js"></script>
+<script src="js/main.js"></script>
+
+<script>
+  //Load main movie details
+  function loadMovieDetails(){
+    const selectedMovie = localStorage.getItem("selectedMovie");
+    
+    if (!selectedMovie){
+      window.location.href = "index.html";
+      return;
+    }
+
+    //Get movie data from local dataset
+    const movieData = movies.find(m => m.title === selectedMovie);
+    if (movieData){
+      document.getElementById("movieTitle").innerText = movieData.title;
+      document.getElementById("movieRating").innerText = `⭐ ${movieData.rating} / 10`;
+      
+      document.getElementById("movieGenre").innerText = movieData.genre;
+      document.getElementById("movieGenreTop").innerText = movieData.genre.toUpperCase();
+      
+      document.getElementById("mainPoster").src = movieData.poster;
+      document.getElementById("mainPoster").alt = `${movieData.title} Poster`;
+      document.getElementById("mainPoster").onerror = function() {
+      this.src = 'https://via.placeholder.com/300x450/1a1d24/e74c3c?text=' + 
+                  encodeURIComponent(movieData.title);
+      };
+      
+      //Set description
+      if (movieData.description) {
+        document.getElementById("movieDescription").innerText = movieData.description;
+      }
+    }
+    loadRecommendations(selectedMovie);
+  }
+
+  //Load recommended movies
+  function loadRecommendations(selectedMovie) {
+    const recommendations = getRecommendations(selectedMovie);
+    const grid = document.getElementById("recommendationGrid");
+    grid.innerHTML = ''; //clear existing content
+
+    recommendations.forEach(movie => {
+      const card = document.createElement("div");
+      card.className = "rec-card";
+
+      card.innerHTML = `
+        <div class="rec-card-content">
+          <h4>${movie.title}</h4>
+          <p>Genre: ${movie.genre}</p>
+          <p>Rating: ⭐ ${movie.rating}/10</p>
+        </div>
+        <div class="rec-card-poster">
+          <img src="${movie.poster}" alt="${movie.title} Poster">
+        </div>
+      `;
+
+      //Adding click event to navigate to this movie
+      card.onclick = () => {
+        localStorage.setItem("selectedMovie", movie.title);
+        window.scrollTo(0, 0);
+        location.reload();
+      };
+
+      grid.appendChild(card);
+    });
+  }
+  loadMovieDetails();
+</script>
+
+</body>
+</html>
